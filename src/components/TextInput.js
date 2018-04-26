@@ -213,6 +213,15 @@ class TextInput extends React.Component<Props, State> {
     this.props.onChangeText && this.props.onChangeText(value);
   };
 
+  _getBottomLineStyle = (color: string, animatedValue: Animated.Value) => ({
+    backgroundColor: color,
+    transform: [{ scaleX: animatedValue }],
+    opacity: animatedValue.interpolate({
+      inputRange: [0, 0.1, 1],
+      outputRange: [0, 1, 1],
+    }),
+  });
+
   setNativeProps(...args) {
     return this._root.setNativeProps(...args);
   }
@@ -300,18 +309,6 @@ class TextInput extends React.Component<Props, State> {
         { translateY: labelTranslateY },
       ],
     };
-
-    const getBottomLineStyle = (
-      color: string,
-      animatedValue: Animated.Value
-    ) => ({
-      backgroundColor: color,
-      transform: [{ scaleX: animatedValue }],
-      opacity: animatedValue.interpolate({
-        inputRange: [0, 0.1, 1],
-        outputRange: [0, 1, 1],
-      }),
-    });
 
     return (
       <View style={style}>
