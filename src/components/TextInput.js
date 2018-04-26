@@ -133,9 +133,11 @@ class TextInput extends React.Component<Props, State> {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.hasError !== this.props.hasError) {
-      (nextProps.hasError ? this._animateFocus : this._animateBlur)(
-        this.state.errorShown
-      );
+      if (nextProps.hasError) {
+        this._animateFocus(this.state.errorShown);
+      } else {
+        this._animateBlur(this.state.errorShown);
+      }
     }
   }
 
