@@ -17,6 +17,8 @@ const MINIMIZED_LABEL_Y_OFFSET = -22;
 const MAXIMIZED_LABEL_FONT_SIZE = 16;
 const MINIMIZED_LABEL_FONT_SIZE = 12;
 const LABEL_WIGGLE_X_OFFSET = 4;
+const FOCUS_ANIMATION_MILLIS = 150;
+const BLUR_ANIMATION_MILLIS = 180;
 
 type Props = {
   /**
@@ -134,9 +136,9 @@ class TextInput extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps) {
     if (nextProps.hasError !== this.props.hasError) {
       if (nextProps.hasError) {
-        this._animateFocus(this.state.errorShown);
+        this._animateErrorShown();
       } else {
-        this._animateBlur(this.state.errorShown);
+        this._animateErrorHidden();
       }
     }
   }
@@ -179,30 +181,44 @@ class TextInput extends React.Component<Props, State> {
 
   _root: NativeTextInput;
 
-  _animateFocus = (animatedValue: Animated.Value) => {
-    Animated.timing(animatedValue, {
+  _animateErrorShown = () => {
+    Animated.timing(this.state.errorShown, {
       toValue: 1,
-      duration: 150,
+      duration: FOCUS_ANIMATION_MILLIS,
     }).start(this._setPlaceholder);
   };
 
-  _animateBlur = (animatedValue: Animated.Value) => {
-    this._removePlaceholder();
-    Animated.timing(animatedValue, {
+  _animateErrorHidden = () => {
+    Animated.timing(this.state.errorShown, {
       toValue: 0,
-      duration: 180,
+      duration: BLUR_ANIMATION_MILLIS,
+    }).start();
+  };
+
+  _animateFocus = () => {
+    Animated.timing(this.state.focused, {
+      toValue: 1,
+      duration: FOCUS_ANIMATION_MILLIS,
+    }).start(this._setPlaceholder);
+  };
+
+  _animateBlur = () => {
+    this._removePlaceholder();
+    Animated.timing(this.state.focused, {
+      toValue: 0,
+      duration: BLUR_ANIMATION_MILLIS,
     }).start();
   };
 
   _handleFocus = (...args) => {
-    this._animateFocus(this.state.focused);
+    this._animateFocus();
     if (this.props.onFocus) {
       this.props.onFocus(...args);
     }
   };
 
   _handleBlur = (...args) => {
-    this._animateBlur(this.state.focused);
+    this._animateBlur();
     if (this.props.onBlur) {
       this.props.onBlur(...args);
     }
@@ -356,14 +372,14 @@ class TextInput extends React.Component<Props, State> {
             style={[
               styles.bottomLine,
               styles.focusLine,
-              getBottomLineStyle(bottomLineColor, this.state.focused),
+              this._getBottomLineStyle(bottomLineColor, this.state.focused),
             ]}
           />
           <Animated.View
             style={[
               styles.bottomLine,
               styles.focusLine,
-              getBottomLineStyle(
+              this._getBottomLineStyle(
                 errorColor,
                 // $FlowFixMe$
                 Animated.multiply(this.state.focused, this.state.errorShown)
