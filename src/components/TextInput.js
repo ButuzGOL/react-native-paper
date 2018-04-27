@@ -36,7 +36,7 @@ type Props = {
   /**
    * Whether to style the TextInput with error style.
    */
-  hasError?: boolean,
+  error?: boolean,
   /**
    * Callback that is called when the text input's text changes. Changed text is passed as an argument to the callback handler.
    */
@@ -122,20 +122,20 @@ type State = {
 class TextInput extends React.Component<Props, State> {
   static defaultProps = {
     disabled: false,
-    hasError: false,
+    error: false,
     multiline: false,
   };
 
   state = {
     focused: new Animated.Value(0),
     placeholder: '',
-    errorShown: new Animated.Value(this.props.hasError ? 1 : 0),
+    errorShown: new Animated.Value(this.props.error ? 1 : 0),
     value: this.props.value,
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.hasError !== this.props.hasError) {
-      if (nextProps.hasError) {
+    if (nextProps.error !== this.props.error) {
+      if (nextProps.error) {
         this._animateErrorShown();
       } else {
         this._animateErrorHidden();
@@ -262,7 +262,7 @@ class TextInput extends React.Component<Props, State> {
     const {
       disabled,
       label,
-      hasError,
+      error,
       underlineColor,
       style,
       theme,
@@ -281,7 +281,7 @@ class TextInput extends React.Component<Props, State> {
 
     if (!disabled) {
       inputTextColor = colors.text;
-      labelColor = (hasError && errorColor) || primaryColor;
+      labelColor = (error && errorColor) || primaryColor;
       bottomLineColor = underlineColor || primaryColor;
     } else {
       inputTextColor = labelColor = bottomLineColor = inactiveColor;
@@ -294,7 +294,7 @@ class TextInput extends React.Component<Props, State> {
 
     /* Wiggle when error appears and label is minimized */
     const labelTranslateX =
-      this.state.value && hasError
+      this.state.value && error
         ? this.state.errorShown.interpolate({
             inputRange: [0, 0.5, 1],
             outputRange: [0, LABEL_WIGGLE_X_OFFSET, 0],
@@ -365,7 +365,7 @@ class TextInput extends React.Component<Props, State> {
           <View
             style={[
               styles.bottomLine,
-              { backgroundColor: hasError ? errorColor : inactiveColor },
+              { backgroundColor: error ? errorColor : inactiveColor },
             ]}
           />
           <Animated.View
