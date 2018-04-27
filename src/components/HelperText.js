@@ -68,9 +68,8 @@ type State = {
  *           onChangeText={text => this.setState({ text })}
  *         />
  *         <HelperText type='info'>
-             Info text
-           </HelperText>
- *
+ *           Info text
+ *         </HelperText>
  *       </View>
  *     );
  *   }
