@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
+    elevation: 6,
   },
   container: {
     flexDirection: 'row',
